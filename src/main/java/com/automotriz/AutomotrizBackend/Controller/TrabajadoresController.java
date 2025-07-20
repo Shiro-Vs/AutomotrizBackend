@@ -160,4 +160,10 @@ public class TrabajadoresController {
         }
     }
 
+    @GetMapping("/activos")
+    public ResponseEntity<List<TrabajadoresDTO>> obtenerTrabajadoresActivos() {
+        List<TrabajadoresDTO> trabajadores = trabajadoresService.obtenerActivos();
+        return ResponseEntity.ok(trabajadores);
+    }
+
 }

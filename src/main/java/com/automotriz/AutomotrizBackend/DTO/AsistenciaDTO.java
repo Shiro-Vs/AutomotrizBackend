@@ -10,6 +10,7 @@ public class AsistenciaDTO {
     private Integer id;
     private LocalDate fecha;
     private LocalTime horaEntrada;
-    private LocalTime horaSalida;
+    private Boolean llegoTarde;
+    private Boolean falto;
     private Integer idTrabajador;
 }

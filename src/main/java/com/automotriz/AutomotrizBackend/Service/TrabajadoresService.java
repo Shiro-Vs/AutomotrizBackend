@@ -2,6 +2,7 @@ package com.automotriz.AutomotrizBackend.Service;
 
 import java.util.List;
 
+import com.automotriz.AutomotrizBackend.DTO.TrabajadoresDTO;
 import com.automotriz.AutomotrizBackend.Model.Trabajadores;
 
 public interface TrabajadoresService {
@@ -10,4 +11,5 @@ public interface TrabajadoresService {
     Trabajadores buscarPorId(Integer id);
     void eliminar(Integer id);
     Trabajadores buscarPorDni(String dni);
+     List<TrabajadoresDTO> obtenerActivos();
 }

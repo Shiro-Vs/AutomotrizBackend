@@ -1,31 +1,34 @@
 package com.automotriz.AutomotrizBackend.Model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+@Data
 @Entity
 @Table(name = "asistencias")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Asistencia {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "trabajador_id", referencedColumnName = "id_admin")
-    private Trabajadores trabajadores;
-
+    @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
-    private LocalTime horaEntrada;  // ✅ agregar
-    private LocalTime horaSalida;   // ✅ agregar
+    @Column(name = "hora_entrada", nullable = false)
+    private LocalTime horaEntrada;
 
-    private String estado;
+    @Column(name = "llego_tarde")
+    private Boolean llegoTarde = false;
+
+    @Column(name = "falto")
+    private Boolean falto = false;
+
+    @ManyToOne
+    @JoinColumn(name = "trabajador_id", nullable = false)
+    private Trabajadores trabajadores;
+
 }
-

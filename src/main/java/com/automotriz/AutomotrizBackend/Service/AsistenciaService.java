@@ -8,7 +8,7 @@ import java.util.List;
 public interface AsistenciaService {
     List<AsistenciaDTO> listarPorTrabajador(Integer idTrabajador);
     AsistenciaDTO obtenerPorFecha(Integer idTrabajador, LocalDate fecha);
-    AsistenciaDTO registrar(AsistenciaDTO asistenciaDTO);
+    String registrar(AsistenciaDTO asistenciaDTO);
     AsistenciaDTO actualizar(AsistenciaDTO asistenciaDTO);
     void eliminar(Integer id);
 }

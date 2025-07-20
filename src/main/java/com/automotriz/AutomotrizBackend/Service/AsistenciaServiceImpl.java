@@ -25,10 +25,11 @@ public class AsistenciaServiceImpl implements AsistenciaService {
     // 🔁 Convertir Entidad a DTO
     private AsistenciaDTO toDTO(Asistencia asistencia) {
         AsistenciaDTO dto = new AsistenciaDTO();
-        dto.setId(asistencia.getId());
+        dto.setId(asistencia.getId()); // <- IMPORTANTE
         dto.setFecha(asistencia.getFecha());
         dto.setHoraEntrada(asistencia.getHoraEntrada());
-        dto.setHoraSalida(asistencia.getHoraSalida());
+        dto.setLlegoTarde(asistencia.getLlegoTarde());
+        dto.setFalto(asistencia.getFalto());
         dto.setIdTrabajador(asistencia.getTrabajadores().getId_admin());
         return dto;
     }
@@ -36,10 +37,13 @@ public class AsistenciaServiceImpl implements AsistenciaService {
     // 🔁 Convertir DTO a Entidad
     private Asistencia toEntity(AsistenciaDTO dto) {
         Asistencia asistencia = new Asistencia();
-        asistencia.setId(dto.getId());
+        if (dto.getId() != null) {
+            asistencia.setId(dto.getId()); // <- IMPORTANTE
+        }
         asistencia.setFecha(dto.getFecha());
         asistencia.setHoraEntrada(dto.getHoraEntrada());
-        asistencia.setHoraSalida(dto.getHoraSalida());
+        asistencia.setLlegoTarde(dto.getLlegoTarde());
+        asistencia.setFalto(dto.getFalto());
 
         Optional<Trabajadores> trabajadorOpt = trabajadoresRepository.findById(dto.getIdTrabajador());
         trabajadorOpt.ifPresent(asistencia::setTrabajadores);
@@ -50,7 +54,8 @@ public class AsistenciaServiceImpl implements AsistenciaService {
     @Override
     public List<AsistenciaDTO> listarPorTrabajador(Integer idTrabajador) {
         Optional<Trabajadores> trabajadorOpt = trabajadoresRepository.findById(idTrabajador);
-        if (trabajadorOpt.isEmpty()) return List.of();
+        if (trabajadorOpt.isEmpty())
+            return List.of();
 
         return asistenciaRepository.findByTrabajadores(trabajadorOpt.get())
                 .stream()
@@ -61,7 +66,8 @@ public class AsistenciaServiceImpl implements AsistenciaService {
     @Override
     public AsistenciaDTO obtenerPorFecha(Integer idTrabajador, LocalDate fecha) {
         Optional<Trabajadores> trabajadorOpt = trabajadoresRepository.findById(idTrabajador);
-        if (trabajadorOpt.isEmpty()) return null;
+        if (trabajadorOpt.isEmpty())
+            return null;
 
         return asistenciaRepository.findByTrabajadoresAndFecha(trabajadorOpt.get(), fecha)
                 .map(this::toDTO)
@@ -69,10 +75,28 @@ public class AsistenciaServiceImpl implements AsistenciaService {
     }
 
     @Override
-    public AsistenciaDTO registrar(AsistenciaDTO asistenciaDTO) {
-        Asistencia asistencia = toEntity(asistenciaDTO);
-        Asistencia guardado = asistenciaRepository.save(asistencia);
-        return toDTO(guardado);
+    public String registrar(AsistenciaDTO dto) {
+        Optional<Trabajadores> trabajadoresOpt = trabajadoresRepository.findById(dto.getIdTrabajador());
+
+        if (trabajadoresOpt.isEmpty()) {
+            return "Trabajador no encontrado.";
+        }
+
+        Trabajadores trabajadores = trabajadoresOpt.get();
+
+        if (Boolean.FALSE.equals(trabajadores.getEstado())) {
+            return "El usuario está inactivo.";
+        }
+
+        Asistencia asistencia = new Asistencia();
+        asistencia.setFecha(dto.getFecha());
+        asistencia.setHoraEntrada(dto.getHoraEntrada());
+        asistencia.setLlegoTarde(dto.getLlegoTarde());
+        asistencia.setFalto(dto.getFalto());
+        asistencia.setTrabajadores(trabajadores);
+
+        asistenciaRepository.save(asistencia);
+        return "Asistencia registrada con éxito.";
     }
 
     @Override
@@ -86,4 +110,5 @@ public class AsistenciaServiceImpl implements AsistenciaService {
     public void eliminar(Integer id) {
         asistenciaRepository.deleteById(id);
     }
+
 }
