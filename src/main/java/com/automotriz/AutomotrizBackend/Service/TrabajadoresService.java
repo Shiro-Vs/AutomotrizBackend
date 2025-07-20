@@ -9,4 +9,5 @@ public interface TrabajadoresService {
     void registrar(Trabajadores trabajador);
     Trabajadores buscarPorId(Integer id);
     void eliminar(Integer id);
+    Trabajadores buscarPorDni(String dni);
 }

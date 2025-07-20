@@ -8,7 +8,10 @@ import com.automotriz.AutomotrizBackend.DTO.TrabajadoresDTO;
 import com.automotriz.AutomotrizBackend.Model.Trabajadores;
 import com.automotriz.AutomotrizBackend.Service.TrabajadoresService;
 
+import java.text.Normalizer;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -58,6 +61,42 @@ public class TrabajadoresController {
 
         trabajadoresService.registrar(trabajador);
         return ResponseEntity.ok("Trabajador registrado correctamente.");
+    }
+
+    // Login
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody TrabajadoresDTO dto) {
+        String dni = dto.getDni();
+        String contrasenia = dto.getContrasenia();
+
+        Trabajadores trabajador = trabajadoresService.buscarPorDni(dni);
+
+        if (trabajador == null) {
+            return ResponseEntity.status(401).body("Usuario no encontrado");
+        }
+
+        if (!trabajador.getContrasenia().equals(contrasenia)) {
+            return ResponseEntity.status(401).body("Contraseña incorrecta");
+        }
+
+        // Normalizamos el rol para evitar errores por mayúsculas/tildes
+        String rolOriginal = trabajador.getRol();
+        String rol = Normalizer.normalize(rolOriginal, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "") // elimina acentos
+                .toLowerCase(Locale.ROOT);
+
+        if (!rol.equals("administrador") && !rol.equals("mecanico")) {
+            return ResponseEntity.status(403).body(
+                    Map.of("error", "Acceso restringido solo a administradores o mecánicos"));
+        }
+
+        // Devuelve solo los datos necesarios
+        TrabajadoresDTO responseDTO = new TrabajadoresDTO();
+        responseDTO.setId(trabajador.getId_admin());
+        responseDTO.setNombre(trabajador.getNombre());
+        responseDTO.setRol(trabajador.getRol());
+
+        return ResponseEntity.ok(responseDTO);
     }
 
     // ✅ Buscar por ID

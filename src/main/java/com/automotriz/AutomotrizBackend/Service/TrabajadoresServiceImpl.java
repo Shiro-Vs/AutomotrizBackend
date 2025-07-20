@@ -33,4 +33,10 @@ public class TrabajadoresServiceImpl implements TrabajadoresService {
     public void eliminar(Integer id) {
         trabajadoresRepository.deleteById(id);
     }
+
+    @Override
+    public Trabajadores buscarPorDni(String dni) {
+        return trabajadoresRepository.findByDni(dni);
+    }
+
 }
