@@ -1,11 +1,12 @@
 package com.automotriz.AutomotrizBackend.Service;
 
+import java.time.LocalTime;
+
 import com.automotriz.AutomotrizBackend.DTO.HorarioDTO;
-import java.util.List;
+import com.automotriz.AutomotrizBackend.Model.Horario;
 
 public interface HorarioService {
-    HorarioDTO registrar(HorarioDTO horarioDTO);
-    HorarioDTO actualizar(HorarioDTO horarioDTO);
-    List<HorarioDTO> listarPorTrabajador(Integer idTrabajador);
-    void eliminar(Integer id);
+    void guardarOHorActualizar(HorarioDTO horarioDTO);
+    Horario actualizarHorario(Integer idTrabajador, LocalTime entrada, LocalTime salida, String descanso);
+    HorarioDTO obtenerHorario(Integer idTrabajador);
 }

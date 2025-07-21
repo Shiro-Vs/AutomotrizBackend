@@ -1,29 +1,27 @@
 package com.automotriz.AutomotrizBackend.Model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 
 @Entity
-@Table(name = "horarios")
+@Table(name = "horarios_trabajador")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Horario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "trabajador_id", referencedColumnName = "id_admin")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_trabajador", nullable = false)
     private Trabajadores trabajador;
 
-    private String horaEntrada;
-    private String horaSalida;
+    @Column(name = "hora_entrada", nullable = false)
+    private java.time.LocalTime horaEntrada;
 
-    // Ejemplo: "Lunes,Martes,Miércoles,Jueves,Viernes"
-    private String diasTrabajo;
+    @Column(name = "hora_salida", nullable = false)
+    private java.time.LocalTime horaSalida;
 
-    // Ejemplo: "Sábado,Domingo"
-    private String diasDescanso;
+    @Column(name = "dias_descanso")
+    private String diasDescanso; // Ejemplo: "Sábado,Domingo"
 }

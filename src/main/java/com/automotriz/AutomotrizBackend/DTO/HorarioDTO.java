@@ -1,13 +1,23 @@
 package com.automotriz.AutomotrizBackend.DTO;
 
+import java.time.LocalTime;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
+
 import lombok.Data;
 
 @Data
 public class HorarioDTO {
-    private Integer id;
     private Integer idTrabajador;
-    private String horaEntrada;
-    private String horaSalida;
-    private String diasTrabajo;
+
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime horaEntrada;
+
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonFormat(pattern = "HH:mm")
+    private LocalTime horaSalida;
     private String diasDescanso;
 }

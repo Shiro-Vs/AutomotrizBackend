@@ -1,15 +1,17 @@
 package com.automotriz.AutomotrizBackend.Service;
 
+import java.time.LocalTime;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.automotriz.AutomotrizBackend.DTO.HorarioDTO;
 import com.automotriz.AutomotrizBackend.Model.Horario;
 import com.automotriz.AutomotrizBackend.Model.Trabajadores;
 import com.automotriz.AutomotrizBackend.Repository.HorarioRepository;
 import com.automotriz.AutomotrizBackend.Repository.TrabajadoresRepository;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.util.*;
+import jakarta.transaction.Transactional;
 
 @Service
 public class HorarioServiceImpl implements HorarioService {
@@ -18,63 +20,52 @@ public class HorarioServiceImpl implements HorarioService {
     private HorarioRepository horarioRepository;
 
     @Autowired
-    private TrabajadoresRepository trabajadorRepository;
+    private TrabajadoresRepository trabajadoresRepository;
 
     @Override
-    public HorarioDTO registrar(HorarioDTO dto) {
-        Horario horario = new Horario();
-        Trabajadores trabajador = trabajadorRepository.findById(dto.getIdTrabajador()).orElseThrow();
+    @Transactional
+    public void guardarOHorActualizar(HorarioDTO dto) {
+        LocalTime entrada = dto.getHoraEntrada();
+        LocalTime salida = dto.getHoraSalida();
 
-        horario.setTrabajador(trabajador);
-        horario.setHoraEntrada(dto.getHoraEntrada());
-        horario.setHoraSalida(dto.getHoraSalida());
-        horario.setDiasTrabajo(dto.getDiasTrabajo());
-        horario.setDiasDescanso(dto.getDiasDescanso());
-
-        horario = horarioRepository.save(horario);
-
-        return toDTO(horario);
+        actualizarHorario(dto.getIdTrabajador(), entrada, salida, dto.getDiasDescanso());
     }
 
     @Override
-    public HorarioDTO actualizar(HorarioDTO dto) {
-        Horario horario = horarioRepository.findById(dto.getId()).orElseThrow();
+    public Horario actualizarHorario(Integer idTrabajador, LocalTime entrada, LocalTime salida, String descanso) {
+        Trabajadores trabajador = trabajadoresRepository.findById(idTrabajador)
+                .orElseThrow(() -> new RuntimeException("Trabajador no encontrado"));
 
-        horario.setHoraEntrada(dto.getHoraEntrada());
-        horario.setHoraSalida(dto.getHoraSalida());
-        horario.setDiasTrabajo(dto.getDiasTrabajo());
-        horario.setDiasDescanso(dto.getDiasDescanso());
+        Horario horario = horarioRepository.findByTrabajador(trabajador)
+                .orElseGet(() -> {
+                    Horario nuevoHorario = new Horario();
+                    nuevoHorario.setTrabajador(trabajador);
+                    return nuevoHorario;
+                });
 
-        horario = horarioRepository.save(horario);
+        horario.setHoraEntrada(entrada);
+        horario.setHoraSalida(salida);
+        horario.setDiasDescanso(descanso);
 
-        return toDTO(horario);
+        return horarioRepository.save(horario);
     }
 
     @Override
-    public List<HorarioDTO> listarPorTrabajador(Integer idTrabajador) {
-        Trabajadores trabajador = trabajadorRepository.findById(idTrabajador).orElseThrow();
-        Optional<Horario> optionalHorario = horarioRepository.findByTrabajador(trabajador);
+    public HorarioDTO obtenerHorario(Integer idTrabajador) {
+        Trabajadores trabajador = trabajadoresRepository.findById(idTrabajador)
+                .orElseThrow(() -> new RuntimeException("Trabajador no encontrado"));
 
-        if (optionalHorario.isPresent()) {
-            return Collections.singletonList(toDTO(optionalHorario.get()));
-        } else {
-            return new ArrayList<>();
-        }
-    }
+        Horario horario = horarioRepository.findByTrabajador(trabajador)
+                .orElseThrow(() -> new RuntimeException("Horario no encontrado"));
 
-    @Override
-    public void eliminar(Integer id) {
-        horarioRepository.deleteById(id);
-    }
-
-    private HorarioDTO toDTO(Horario h) {
+        // Convertir a DTO
         HorarioDTO dto = new HorarioDTO();
-        dto.setId(h.getId());
-        dto.setIdTrabajador(h.getTrabajador().getId_admin());
-        dto.setHoraEntrada(h.getHoraEntrada());
-        dto.setHoraSalida(h.getHoraSalida());
-        dto.setDiasTrabajo(h.getDiasTrabajo());
-        dto.setDiasDescanso(h.getDiasDescanso());
+        dto.setIdTrabajador(trabajador.getId_admin()); // O getIdTrabajador() si se llama así
+        dto.setHoraEntrada(horario.getHoraEntrada());
+        dto.setHoraSalida(horario.getHoraSalida());
+        dto.setDiasDescanso(horario.getDiasDescanso());
+
         return dto;
     }
+
 }

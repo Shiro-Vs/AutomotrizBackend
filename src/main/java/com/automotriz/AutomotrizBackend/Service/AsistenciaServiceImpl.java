@@ -2,8 +2,10 @@ package com.automotriz.AutomotrizBackend.Service;
 
 import com.automotriz.AutomotrizBackend.DTO.AsistenciaDTO;
 import com.automotriz.AutomotrizBackend.Model.Asistencia;
+import com.automotriz.AutomotrizBackend.Model.Horario;
 import com.automotriz.AutomotrizBackend.Model.Trabajadores;
 import com.automotriz.AutomotrizBackend.Repository.AsistenciaRepository;
+import com.automotriz.AutomotrizBackend.Repository.HorarioRepository;
 import com.automotriz.AutomotrizBackend.Repository.TrabajadoresRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -74,6 +76,9 @@ public class AsistenciaServiceImpl implements AsistenciaService {
                 .orElse(null);
     }
 
+    @Autowired
+    private HorarioRepository horarioRepository;
+
     @Override
     public String registrar(AsistenciaDTO dto) {
         Optional<Trabajadores> trabajadoresOpt = trabajadoresRepository.findById(dto.getIdTrabajador());
@@ -82,18 +87,39 @@ public class AsistenciaServiceImpl implements AsistenciaService {
             return "Trabajador no encontrado.";
         }
 
-        Trabajadores trabajadores = trabajadoresOpt.get();
+        Trabajadores trabajador = trabajadoresOpt.get();
 
-        if (Boolean.FALSE.equals(trabajadores.getEstado())) {
+        if (Boolean.FALSE.equals(trabajador.getEstado())) {
             return "El usuario está inactivo.";
         }
 
+        // 👉 Buscar el horario actual del trabajador
+        Optional<Horario> horarioOpt = horarioRepository.findByTrabajador(trabajador);
+        if (horarioOpt.isEmpty()) {
+            return "No se encontró el horario del trabajador.";
+        }
+
+        Horario horario = horarioOpt.get();
+
+        // 👉 Verificar si es día de descanso
+        String diaSemana = dto.getFecha().getDayOfWeek().toString(); // ej. MONDAY
+        if (horario.getDiasDescanso() != null && horario.getDiasDescanso().toUpperCase().contains(diaSemana)) {
+            return "Hoy es un día de descanso.";
+        }
+
+        // 👉 Comparar hora marcada con hora programada
+        boolean llegoTarde = false;
+        if (dto.getHoraEntrada().isAfter(horario.getHoraEntrada().plusMinutes(5))) {
+            llegoTarde = true;
+        }
+
+        // Crear asistencia
         Asistencia asistencia = new Asistencia();
         asistencia.setFecha(dto.getFecha());
         asistencia.setHoraEntrada(dto.getHoraEntrada());
-        asistencia.setLlegoTarde(dto.getLlegoTarde());
-        asistencia.setFalto(dto.getFalto());
-        asistencia.setTrabajadores(trabajadores);
+        asistencia.setLlegoTarde(llegoTarde);
+        asistencia.setFalto(false); // Si se registra, no faltó
+        asistencia.setTrabajadores(trabajador);
 
         asistenciaRepository.save(asistencia);
         return "Asistencia registrada con éxito.";

@@ -24,6 +24,9 @@ public class Trabajadores {
     @OneToMany(mappedBy = "trabajadores")
     private List<Cliente> clientes;
 
+    @OneToMany(mappedBy = "trabajador")
+    private List<Horario> horarios;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id_admin;
