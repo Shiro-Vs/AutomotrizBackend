@@ -1,17 +1,22 @@
+# Dockerfile para el backend de Automotriz
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 
-# Copiar archivos del proyecto
+# Copiar todo el proyecto
 COPY . .
 
-# Asegurar permisos para mvnw
+# Dar permisos al mvnw
 RUN chmod +x mvnw
 
-# Construir el proyecto
+# Compilar el proyecto y generar el jar
 RUN ./mvnw clean package -DskipTests
 
-# Imagen final
+# Etapa final: solo copia el .jar generado
 FROM eclipse-temurin:21-jdk
 WORKDIR /app
-COPY --from=build /app/target/*.jar app.jar
+
+# Copia el .jar desde la fase anterior
+COPY --from=build /app/target/backend-0.0.1-SNAPSHOT.jar app.jar
+
+# Ejecuta el jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
