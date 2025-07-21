@@ -2,10 +2,14 @@ package com.automotriz.AutomotrizBackend.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "horarios_trabajador")
 @Data
+@Getter
+@Setter
 public class Horario {
 
     @Id
