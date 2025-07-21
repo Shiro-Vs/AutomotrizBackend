@@ -1,11 +1,10 @@
 package com.automotriz.AutomotrizBackend.Model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import java.time.LocalTime;
 
 @Entity
 @Table(name = "horarios_trabajador")
-@Data
 public class Horario {
 
     @Id
@@ -17,11 +16,56 @@ public class Horario {
     private Trabajadores trabajador;
 
     @Column(name = "hora_entrada", nullable = false)
-    private java.time.LocalTime horaEntrada;
+    private LocalTime horaEntrada;
 
     @Column(name = "hora_salida", nullable = false)
-    private java.time.LocalTime horaSalida;
+    private LocalTime horaSalida;
 
     @Column(name = "dias_descanso")
-    private String diasDescanso; // Ejemplo: "Sábado,Domingo"
+    private String diasDescanso;
+
+    // Getter y Setter para id
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    // Getter y Setter para trabajador
+    public Trabajadores getTrabajador() {
+        return trabajador;
+    }
+
+    public void setTrabajador(Trabajadores trabajador) {
+        this.trabajador = trabajador;
+    }
+
+    // Getter y Setter para horaEntrada
+    public LocalTime getHoraEntrada() {
+        return horaEntrada;
+    }
+
+    public void setHoraEntrada(LocalTime horaEntrada) {
+        this.horaEntrada = horaEntrada;
+    }
+
+    // Getter y Setter para horaSalida
+    public LocalTime getHoraSalida() {
+        return horaSalida;
+    }
+
+    public void setHoraSalida(LocalTime horaSalida) {
+        this.horaSalida = horaSalida;
+    }
+
+    // Getter y Setter para diasDescanso
+    public String getDiasDescanso() {
+        return diasDescanso;
+    }
+
+    public void setDiasDescanso(String diasDescanso) {
+        this.diasDescanso = diasDescanso;
+    }
 }

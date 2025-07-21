@@ -1,12 +1,10 @@
 package com.automotriz.AutomotrizBackend.Model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Data
 @Entity
 @Table(name = "asistencias")
 public class Asistencia {
@@ -31,4 +29,24 @@ public class Asistencia {
     @JoinColumn(name = "trabajador_id", nullable = false)
     private Trabajadores trabajadores;
 
+    // Getters y setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
+
+    public LocalDate getFecha() { return fecha; }
+    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+
+    public LocalTime getHoraEntrada() { return horaEntrada; }
+    public void setHoraEntrada(LocalTime horaEntrada) { this.horaEntrada = horaEntrada; }
+
+    public Boolean getLlegoTarde() { return llegoTarde; }
+    public void setLlegoTarde(Boolean llegoTarde) { this.llegoTarde = llegoTarde; }
+
+    public Boolean getFalto() { return falto; }
+    public void setFalto(Boolean falto) { this.falto = falto; }
+
+    public Trabajadores getTrabajadores() { return trabajadores; }
+    public void setTrabajadores(Trabajadores trabajadores) { this.trabajadores = trabajadores; }
 }
+
+
