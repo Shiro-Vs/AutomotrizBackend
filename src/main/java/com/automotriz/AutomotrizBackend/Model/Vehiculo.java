@@ -3,18 +3,16 @@ package com.automotriz.AutomotrizBackend.Model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
 @Table(name = "vehiculo")
-@Getter
-@Setter
 @NoArgsConstructor
+@Data
 public class Vehiculo {
 
     @Id

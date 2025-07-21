@@ -1,17 +1,15 @@
 package com.automotriz.AutomotrizBackend.Model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "ficha_tecnica")
-@Getter
-@Setter
 @NoArgsConstructor
+@Data
 public class FichaTecnica {
 
     @Id

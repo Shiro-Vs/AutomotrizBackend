@@ -2,8 +2,6 @@ package com.automotriz.AutomotrizBackend.Model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -11,8 +9,6 @@ import java.time.LocalTime;
 @Data
 @Entity
 @Table(name = "asistencias")
-@Getter
-@Setter
 public class Asistencia {
 
     @Id

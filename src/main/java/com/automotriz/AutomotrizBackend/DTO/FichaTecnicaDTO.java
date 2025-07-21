@@ -4,14 +4,10 @@ import com.automotriz.AutomotrizBackend.Model.EstadoFichaTecnica;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Data
-@Getter
-@Setter
 public class FichaTecnicaDTO {
     private Integer id;
     private String observaciones;
