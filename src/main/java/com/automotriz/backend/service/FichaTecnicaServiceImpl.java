@@ -1,0 +1,45 @@
+package com.automotriz.backend.service;
+
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.stereotype.Service;
+
+import com.automotriz.backend.model.FichaTecnica;
+import com.automotriz.backend.repository.FichaTecnicaRepository;
+
+import java.util.List;
+
+@Service
+public class FichaTecnicaServiceImpl implements FichaTecnicaService {
+
+    private final FichaTecnicaRepository fichaTecnicaRepository;
+
+    public FichaTecnicaServiceImpl(FichaTecnicaRepository fichaTecnicaRepository) {
+        this.fichaTecnicaRepository = fichaTecnicaRepository;
+    }
+
+    @Override
+    public List<FichaTecnica> listarTodos() {
+        return fichaTecnicaRepository.findAll();
+    }
+
+    @Override
+    public FichaTecnica buscarPorId(Integer id) {
+        return fichaTecnicaRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void registrar(FichaTecnica ficha) {
+        fichaTecnicaRepository.save(ficha);
+    }
+
+    @Override
+    public void eliminar(Integer id) {
+        fichaTecnicaRepository.deleteById(id);
+    }
+
+    @Override
+    public List<FichaTecnica> buscarPorVehiculo(Integer idVehiculo) {
+        return fichaTecnicaRepository.findByVehiculoIdVehiculo(idVehiculo);
+    }
+}
