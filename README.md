@@ -60,7 +60,7 @@ config.setAllowedOrigins(List.of(
 ));
 ```
 
-**Frontend del proyecto:** https://github.com/Shiro-Vs/Automotriz.git
+**Frontend del proyecto:** [SAF Service Frontend](https://github.com/Shiro-Vs/Automotriz.git)
 
 ## 🏃‍♂️ Ejecutar el Proyecto
 
@@ -110,7 +110,84 @@ src/main/java/com/automotriz/backend/
 ├── dto/             # Objetos de transferencia de datos
 └── SecurityConfig.java
 ```
+## 🗄️ Modelo de Datos (ER Diagram)
 
+A continuación se muestra el diagrama Entidad-Relación que representa la estructura de la base de datos del sistema:
+
+```mermaid
+erDiagram
+    trabajadores ||--o{ asistencias : registra
+    trabajadores ||--o{ horarios_trabajador : tiene
+    trabajadores ||--o{ cliente : registra
+    cliente ||--o{ vehiculo : posee
+    vehiculo ||--o{ ficha_tecnica : tiene
+
+    cliente {
+        INT id PK
+        VARCHAR celular
+        VARCHAR dni
+        VARCHAR nombre
+        INT id_admin FK
+        VARCHAR direccion
+        VARCHAR email
+    }
+
+    trabajadores {
+        INT id_admin PK
+        VARCHAR celular
+        VARCHAR contrasenia
+        VARCHAR direccion
+        VARCHAR dni
+        VARCHAR email
+        BIT estado
+        DATE fecha_ingreso
+        DATE fecha_retiro
+        VARCHAR nombre
+        VARCHAR rol
+    }
+
+    vehiculo {
+        INT id_vehiculo PK
+        INT anio
+        VARCHAR color
+        DATE fecha_registro
+        VARCHAR marca
+        VARCHAR modelo
+        VARCHAR placa
+        INT id_cliente FK
+    }
+
+    horarios_trabajador {
+        INT id PK
+        INT id_trabajador FK
+        TIME hora_entrada
+        TIME hora_salida
+        VARCHAR dias_descanso
+    }
+
+    asistencias {
+        BIGINT id PK
+        INT trabajador_id FK
+        DATE fecha
+        TIME hora_entrada
+        TINYINT llego_tarde
+        TINYINT falto
+    }
+
+    ficha_tecnica {
+        INT id PK
+        TEXT diagnostico_inicial
+        ENUM estado
+        DATE f_ingreso
+        DATE f_salida
+        TEXT observaciones
+        TEXT repuestos
+        TEXT servicios
+        INT id_vehiculo FK
+    }
+```
+
+    
 ## 🔌 Endpoints Principales
 
 - `/api/clientes` - Gestión de clientes
